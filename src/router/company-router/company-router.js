@@ -1,0 +1,25 @@
+import { Router } from "express";
+import { createCompany } from "../../controller/company/company-signup";
+import { updateCompany } from "../../controller/company/company-update";
+import { deleteCompany } from "../../controller/company/delete-company";
+import { getCompanies } from "../../controller/company/get-companies";
+import { companyVerify } from "../../controller/company/company-verify";
+import { companyVerifyToken } from "../../middleware/company-verify-token";
+import { companyLogin } from "../../controller/company/company-login";
+import { idValidator } from "../../middleware/id-validator";
+import { getCompany } from "../../controller/company/get-company";
+import { appliedUsers } from "../../controller/company/applied-users";
+import { appliedJobs } from "../../controller/company/applied-jobs";
+import { acceptReject } from "../../controller/company/accept-reject";
+export const companyRouter = Router();
+
+companyRouter.post("/create", createCompany);
+companyRouter.post("/verify", companyVerifyToken, companyVerify);
+companyRouter.post("/login", companyLogin);
+companyRouter.patch("/update/:id", idValidator, updateCompany);
+companyRouter.delete("/delete/:id", idValidator, deleteCompany);
+companyRouter.get("/getall", getCompanies);
+companyRouter.get("/get/:id", idValidator, getCompany);
+companyRouter.get("/applied-users/:id", idValidator, appliedUsers);
+companyRouter.get("/filter", appliedJobs);
+companyRouter.post("/send-mail", acceptReject);
