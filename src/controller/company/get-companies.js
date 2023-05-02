@@ -5,7 +5,7 @@ export const getCompanies = async (req, res) => {
   try {
     const company = await Company.find().select("-password");
     if (company.length === 0) {
-      return responseHandler(res, 400, "No Company Found", false);
+      return responseHandler(res, 200, "No Company Found", true, company);
     }
     return responseHandler(
       res,

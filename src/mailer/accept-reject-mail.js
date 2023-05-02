@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const acceptRejectMail = function (data, job, user) {
-  const transporter = nodeMailer.createTransport({
+export const acceptRejectMail = async function (data, job, user) {
+  const transporter = await nodeMailer.createTransport({
     service: "gmail",
     auth: {
       user: process.env.MAILER_EMAIL,
@@ -12,7 +12,7 @@ export const acceptRejectMail = function (data, job, user) {
     },
   });
 
-  const info = transporter.sendMail({
+  const info =await transporter.sendMail({
     from: process.env.MAILER_EMAIL,
     to: user.email,
     subject: "Regarding Job",

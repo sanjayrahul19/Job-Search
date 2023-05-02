@@ -9,6 +9,13 @@ export const acceptReject = async (req, res) => {
     const job = await Job.findById(req.body.jobId).populate(
       "company_name applied_users"
     );
+    if (req.body.message === "rejected") {
+      await Job.findByIdAndUpdate(
+        req.body.jobId,
+        { $pull: { applied_users: req.body.userId } },
+        { new: true }
+      );
+    }
     await acceptRejectMail(req.body, job, user);
     return responseHandler(res, 200, "Mail sent Successfully", true);
   } catch (err) {

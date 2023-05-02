@@ -21,5 +21,5 @@ connectDB();
 app.use("/", router);
 
 app.listen(PORT, () => {
-  console.log("Server is up and running");
+  console.log(`Server is up and running ${PORT}`);
 });

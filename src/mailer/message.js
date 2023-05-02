@@ -3,16 +3,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-
-export const sendMessage = function (hrEmail, message) {
-  const transporter = nodeMailer.createTransport({
+export const sendMessage = async function (hrEmail, message) {
+  const transporter = await nodeMailer.createTransport({
     service: "gmail",
     auth: {
       user: process.env.MAILER_EMAIL,
       pass: process.env.MAILER_PASSWORD,
     },
   });
-  const info = transporter.sendMail({
+  const info = await transporter.sendMail({
     from: process.env.MAILER_EMAIL,
     to: hrEmail,
     subject: "Regarding Job",

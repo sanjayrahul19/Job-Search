@@ -7,6 +7,9 @@ export const userDetail = async (req, res) => {
     const user = await User.findById(id)
       .populate("qualifications")
       .select("-password");
+    if (!user) {
+      return responseHandler(res, 400, "No User Found", false);
+    }
     return responseHandler(
       res,
       200,

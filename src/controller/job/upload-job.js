@@ -10,6 +10,15 @@ export const jobUpload = async (req, res) => {
       const fileBuffer = file.data;
       const workbook = XLSX.read(fileBuffer);
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const range = XLSX.utils.decode_range(sheet["!ref"]);
+      for (let i = range.s.r; i <= range.e.r; i++) {
+        for (let j = range.s.c; j <= range.e.c; j++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: i, c: j });
+          if (!sheet[cellAddress]) {
+            throw new Error(`Empty cell found at ${cellAddress}`);
+          }
+        }
+      }
       const data = XLSX.utils.sheet_to_json(sheet);
       for (let i = 0; i < data.length; i++) {
         const jobData = data[i];

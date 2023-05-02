@@ -6,9 +6,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-
 export const userLogin = async (req, res) => {
   try {
+    let otp = Math.floor(1000 + Math.random() * 9000);
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       if (user.verified) {
@@ -29,7 +29,19 @@ export const userLogin = async (req, res) => {
           return responseHandler(res, 401, "Incorrect password", false);
         }
       } else {
-        return responseHandler(res, 401, "User not Verified", false);
+        const updatedOtp = await User.findOneAndUpdate(
+          { email: req.body.email },
+          { otp: otp },
+          { new: true }
+        ).select("-password");
+        await mailer(updatedOtp, otp);
+        return responseHandler(
+          res,
+          401,
+          "Your Not Verified,Check Your Mail And Verify Now",
+          false,
+          updatedOtp
+        );
       }
     } else {
       return responseHandler(res, 404, "User not found", false);

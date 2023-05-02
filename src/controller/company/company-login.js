@@ -2,14 +2,14 @@ import { Company } from "../../model/company";
 import bcrypt from "bcrypt";
 import { responseHandler } from "../../response/responseHandler";
 import jwt from "jsonwebtoken";
+import { mailer } from "../../mailer/mailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-
-
 export const companyLogin = async (req, res) => {
   try {
+    let otp = Math.floor(1000 + Math.random() * 9000);
     const company = await Company.findOne({ email: req.body.email });
     if (company) {
       if (company.verified) {
@@ -35,10 +35,22 @@ export const companyLogin = async (req, res) => {
           return responseHandler(res, 401, "Incorrect password", false);
         }
       } else {
-        return responseHandler(res, 401, "Not Verified", false);
+        const updatedOtp = await Company.findOneAndUpdate(
+          { email: req.body.email },
+          { otp: otp },
+          { new: true }
+        ).select("-password");
+        await mailer(updatedOtp, otp);
+        return responseHandler(
+          res,
+          401,
+          "Your Not Verified,Check Your Mail And Verify Now",
+          false,
+          updatedOtp
+        );
       }
     } else {
-      return responseHandler(res, 404, "Company found", false);
+      return responseHandler(res, 404, "Company Not found", false);
     }
   } catch (err) {
     return responseHandler(res, 500, err.message, false);
